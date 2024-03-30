@@ -32,7 +32,7 @@ const startIDE = (code) => {
       .catch((error) => {
         console.error('There was a problem with the request:', error);
       });
-  };
+};
   
   // Regular expression to match contest code
 const contestRegex = /\/contest\/(\d+)/;
