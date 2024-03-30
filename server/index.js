@@ -1,16 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const { exec } = require('child_process');
 const app = express();
 
 const PORT = 3001;
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.post('/start', (req, res) => {
     // Execute shell script
     const contentNumber = req.body.code
-    console.log(req)
+    console.log(req.body)
     if (contentNumber == null) {
         return res.status(500).json({ error: 'Competitive contest code not found' });
     }
