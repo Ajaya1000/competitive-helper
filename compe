@@ -1,0 +1,22 @@
+cd /Users/ajayamati/vscode/competitive-coding/codeforces
+
+if [ -d "$1" ]; 
+then
+  echo "$1 does exist."
+else
+    echo "$1 does not exist. Creating the folder .... "
+    mkdir "$1"
+    echo "Folder creation successful .... "
+fi
+
+if pgrep "code" > /dev/null; 
+then
+    echo "Visual Studio Code instances found. Killing them..."
+    killall Electron
+    sleep 7  # Wait for 7 seconds
+else
+    echo "No Visual Studio Code instances found."
+fi
+
+echo "open $1 folder .... "
+code "$1"
