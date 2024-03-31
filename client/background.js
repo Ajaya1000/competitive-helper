@@ -1,48 +1,48 @@
-chrome.action.onClicked.addListener((tab) => {
-    console.log("DEBUG: ", tab)
-    const url = tab.url
+// background.js
 
-    const code = extractContestCode(url)
-    if(code) {
-      startIDE(code)
-    } else {
-      console.log("code not found")
-    }
+chrome.action.onClicked.addListener((tab) => {
+  injectScript(tab)
 });
 
+const injectScript = (tab) => {
+  console.log("Injecting content js")
+  chrome.scripting.executeScript({
+    target: {tabId: tab.id},
+    files: ['run_script.js']
+  });
+}
+
 const startIDE = (code) => {
-    fetch('http://localhost:3001/start', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: code,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data); // Script executed successfully
-      })
-      .catch((error) => {
-        console.error('There was a problem with the request:', error);
-      });
-};
-  
-  // Regular expression to match contest code
+  const message = {type: "startIDE", code}
+  sendMessage(message)
+}
+
+const checkIfLoaded = (callback) => {
+  const message = {type: "checkIfLoaded"} 
+  sendMessage(message, callback)
+} 
+
+const sendMessage = (message, callback) => {
+  chrome.runtime.sendMessage(message, (response)=> {
+    if(chrome.runtime.lastError) {
+     console.log("Encount error", message)
+     if(callback) callback('no')
+    } else {
+      console.log(response)
+      if(callback) callback(response)
+    }
+  })
+}
+
+// Regular expression to match contest code
 const contestRegex = /\/contest\/(\d+)/;
 
 // Function to extract contest code from URL
 const extractContestCode = (url) => {
-    const match = url.match(contestRegex);
-    if (match && match[1]) {
-        return match[1];
-    } else {
-        return null; // URL format doesn't match
-    }
-}
+  const match = url.match(contestRegex);
+  if (match && match[1]) {
+    return match[1];
+  } else {
+    return null; // URL format doesn't match
+  }
+};
