@@ -114,6 +114,8 @@ const extractContestCode = (url) => {
   const match = url.match(contestRegex);
   if (match && match[1]) {
     return match[1];
+  } else if (url.test("/^https:\/\/codeforces\.com\/problemset/")){
+    return "practice";
   } else {
     return null; // URL format doesn't match
   }
